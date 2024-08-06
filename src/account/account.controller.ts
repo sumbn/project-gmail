@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { AccountService } from './account.service';
 import { Account } from './entities/account.entity';
@@ -10,5 +10,10 @@ export class AccountController {
   @Post('register')
   register(@Body() body: RegisterDto): Promise<Account> {
     return this.service.register(body);
+  }
+
+  @Get('test')
+  hello() {
+    return 'hello';
   }
 }
