@@ -69,4 +69,58 @@ export class AccountService {
     }
     return array;
   }
+
+  /** generate object user  */
+
+  genaraterUser = async () => {
+    const firstName = (await this.repoFN.find()).map((fn) => fn.name);
+    const lastName = (await this.repoLN.find()).map((ln) => ln.name);
+    const address = (await this.repoAddress.find()).map((add) => add.address);
+    const randomFN = this.getRandomElement(firstName);
+    const randomLN = this.getRandomElement(lastName);
+    const randomAdd = this.getRandomElement(address);
+    const randomBirthday = this.getRandomBirthDate();
+    const passwords = (await this.repoPass.find()).map((p) => p.password);
+    const password = this.getRandomElement(passwords);
+
+    return {
+      name: randomFN + ' ' + randomLN,
+      address: randomAdd,
+      birth_day: randomBirthday,
+      email: this.generateEmail(randomFN, randomLN, randomBirthday),
+      password: password,
+    };
+  };
+
+  private getRandomElement(array: string[]): string {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  private getRandomBirthDate(): string {
+    const start = new Date(1990, 0, 1);
+    const end = new Date(2002, 11, 31);
+    const randomDate = new Date(
+      start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+    );
+    const day = String(randomDate.getDate()).padStart(2, '0');
+    const month = String(randomDate.getMonth() + 1).padStart(2, '0');
+    const year = randomDate.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+  private generateRandomEmail(
+    firstName: string,
+    lastName: string,
+    address: string,
+    birthDay: string,
+  ): string {
+    const birthDate = birthDay.replace(/-/g, '');
+    const patterns = [
+      `${firstName}${lastName}${address}${birthDate}`,
+      `${lastName}${address}${birthDate}`,
+      `${address}${lastName}${birthDate}`,
+      `${address}${firstName}${lastName}${birthDate}`,
+      `${firstName}${address}${birthDate}`,
+    ];
+    return this.getRandomElement(patterns);
+  }
 }

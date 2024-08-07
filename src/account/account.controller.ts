@@ -16,4 +16,9 @@ export class AccountController {
   getMail() {
     return this.service.getDataAndCombine();
   }
+
+  @Get('gen')
+  genUser() {
+    return this.service.genaraterUser();
+  }
 }
