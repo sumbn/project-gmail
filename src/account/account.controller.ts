@@ -12,8 +12,8 @@ export class AccountController {
     return this.service.register(body);
   }
 
-  @Get('test')
-  hello() {
-    return 'hello';
+  @Get('getmail')
+  getMail() {
+    return this.service.getDataAndCombine();
   }
 }
