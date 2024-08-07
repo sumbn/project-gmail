@@ -79,7 +79,7 @@ export class AccountService {
     const randomFN = this.getRandomElement(firstName);
     const randomLN = this.getRandomElement(lastName);
     const randomAdd = this.getRandomElement(address);
-    const randomBirthday = this.getRandomBirthDate();
+    const [randomBirthday, dateBirthday] = this.getRandomBirthDate();
     const passwords = (await this.repoPass.find()).map((p) => p.password);
     const password = this.getRandomElement(passwords);
 
@@ -87,7 +87,12 @@ export class AccountService {
       name: randomFN + ' ' + randomLN,
       address: randomAdd,
       birth_day: randomBirthday,
-      email: this.generateEmail(randomFN, randomLN, randomBirthday),
+      email: this.generateRandomEmail(
+        randomFN,
+        randomLN,
+        randomAdd,
+        dateBirthday,
+      ),
       password: password,
     };
   };
@@ -96,7 +101,7 @@ export class AccountService {
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  private getRandomBirthDate(): string {
+  private getRandomBirthDate(): [string, Date] {
     const start = new Date(1990, 0, 1);
     const end = new Date(2002, 11, 31);
     const randomDate = new Date(
@@ -105,22 +110,45 @@ export class AccountService {
     const day = String(randomDate.getDate()).padStart(2, '0');
     const month = String(randomDate.getMonth() + 1).padStart(2, '0');
     const year = randomDate.getFullYear();
-    return `${day}-${month}-${year}`;
+    return [`${day}-${month}-${year}`, randomDate];
   }
+
+  private getBirthDateFormats(date: Date): string[] {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const shortYear = String(year).slice(-2);
+
+    return [
+      `${day}${month}`,
+      `${day}${month}${shortYear}`,
+      shortYear,
+      `${month}${shortYear}`,
+      String(year),
+    ];
+  }
+
+  private normalizeString(str: string): string {
+    return str.replace(/\s+/g, '').toLowerCase();
+  }
+
   private generateRandomEmail(
     firstName: string,
     lastName: string,
     address: string,
-    birthDay: string,
+    birthDate: Date,
   ): string {
-    const birthDate = birthDay.replace(/-/g, '');
+    const birthDateFormats = this.getBirthDateFormats(birthDate);
+
+    const birthDatePattern = this.getRandomElement(birthDateFormats);
     const patterns = [
-      `${firstName}${lastName}${address}${birthDate}`,
-      `${lastName}${address}${birthDate}`,
-      `${address}${lastName}${birthDate}`,
-      `${address}${firstName}${lastName}${birthDate}`,
-      `${firstName}${address}${birthDate}`,
+      `${firstName}${lastName}${address}${birthDatePattern}`,
+      `${lastName}${address}${birthDatePattern}`,
+      `${address}${lastName}${birthDatePattern}`,
+      `${address}${firstName}${lastName}${birthDatePattern}`,
+      `${firstName}${address}${birthDatePattern}`,
     ];
-    return this.getRandomElement(patterns);
+    const selectedPattern = this.getRandomElement(patterns);
+    return this.normalizeString(selectedPattern) + '@gmail.com';
   }
 }
