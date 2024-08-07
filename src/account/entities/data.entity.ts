@@ -26,3 +26,12 @@ export class Address {
   @Column()
   address: string;
 }
+
+@Entity()
+export class Password {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  password: string;
+}

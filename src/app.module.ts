@@ -19,7 +19,12 @@ import { Account } from './account/entities/account.entity';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Address, FirstName, LastName } from './account/entities/data.entity';
+import {
+  Address,
+  FirstName,
+  LastName,
+  Password,
+} from './account/entities/data.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -32,7 +37,7 @@ import { Address, FirstName, LastName } from './account/entities/data.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE_NAME'),
-        entities: [Account, Address, FirstName, LastName],
+        entities: [Account, Address, FirstName, LastName, Password],
         synchronize: true,
       }),
       inject: [ConfigService],

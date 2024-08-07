@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
-import { Address, FirstName, LastName } from './entities/data.entity';
+import { Address, FirstName, LastName, Password } from './entities/data.entity';
 
 @Injectable()
 export class AccountService {
@@ -12,6 +12,7 @@ export class AccountService {
     @InjectRepository(Address) private repoAddress: Repository<Address>,
     @InjectRepository(FirstName) private repoFN: Repository<FirstName>,
     @InjectRepository(LastName) private repoLN: Repository<LastName>,
+    @InjectRepository(Password) private repoPass: Repository<Password>,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<Account> {
