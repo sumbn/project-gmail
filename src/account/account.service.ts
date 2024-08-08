@@ -84,8 +84,8 @@ export class AccountService {
     const password = this.getRandomElement(passwords);
 
     return {
-      first_name: firstName,
-      last_name: lastName,
+      first_name: randomFN,
+      last_name: randomLN,
       name: randomFN + ' ' + randomLN,
       address: randomAdd,
       birth_day: randomBirthday,
