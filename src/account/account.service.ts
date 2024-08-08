@@ -87,6 +87,8 @@ export class AccountService {
       name: randomFN + ' ' + randomLN,
       address: randomAdd,
       birth_day: randomBirthday,
+      first_name: firstName,
+      last_name: lastName,
       email: this.generateRandomEmail(
         randomFN,
         randomLN,
