@@ -128,6 +128,17 @@ export class AccountService {
     ];
   }
 
+  private removeVietnameseTones(str: string): string {
+    str = str.replace(/á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/g, 'a');
+    str = str.replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/g, 'e');
+    str = str.replace(/i|í|ì|ỉ|ĩ|ị/g, 'i');
+    str = str.replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/g, 'o');
+    str = str.replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/g, 'u');
+    str = str.replace(/ý|ỳ|ỷ|ỹ|ỵ/g, 'y');
+    str = str.replace(/đ/g, 'd');
+    return str;
+  }
+
   private normalizeString(str: string): string {
     return str.replace(/\s+/g, '').toLowerCase();
   }
@@ -149,6 +160,7 @@ export class AccountService {
       `${firstName}${address}${birthDatePattern}`,
     ];
     const selectedPattern = this.getRandomElement(patterns);
-    return this.normalizeString(selectedPattern) + '@gmail.com';
+    const nomalize = this.normalizeString(selectedPattern);
+    return this.removeVietnameseTones(nomalize) + '@gmail.com';
   }
 }
