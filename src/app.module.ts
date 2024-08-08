@@ -4,8 +4,13 @@
 // import { AccountModule } from './account/account.module';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 // import { dataSourceOptions } from '../db/data-source';
+// import { HotmailModule } from './hotmail/hotmail.module';
 // @Module({
-//   imports: [TypeOrmModule.forRoot(dataSourceOptions), AccountModule],
+//   imports: [
+//     TypeOrmModule.forRoot(dataSourceOptions),
+//     AccountModule,
+//     HotmailModule,
+//   ],
 //   controllers: [AppController],
 //   providers: [AppService],
 // })
@@ -25,6 +30,8 @@ import {
   LastName,
   Password,
 } from './account/entities/data.entity';
+import { HotmailModule } from './hotmail/hotmail.module';
+import { HotMail } from './hotmail/entities/hotmail.entity';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -37,12 +44,13 @@ import {
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE_NAME'),
-        entities: [Account, Address, FirstName, LastName, Password],
-        synchronize: true,
+        entities: [Account, Address, FirstName, LastName, Password, HotMail],
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
     AccountModule,
+    HotmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
