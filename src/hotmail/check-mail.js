@@ -13,28 +13,59 @@ const imapConfig = {
 };
 
 const getEmails = () => {
-  try {
-    const imap = new Imap(imapConfig);
-    imap.once('ready', () => {
-      imap.openBox('INBOX', false, () => {
-        imap.search(['UNSEEN', ['SINCE', new Date()]], (err, ress) => {
-          const f = imap.fetch(ress, { bodies: '' });
-          console.log(err);
-          f.on('message', (msg) => {
-            msg.on('body', (stream) => {
-              simpleParser(stream, async (err, parsed) => {
-                console.log('--------------------------');
-                console.log(`From: ${parsed.from.text} --> ${parsed.text}`);
+  return new Promise((resolve, reject) => {
+    try {
+      const mesRes = [];
+      const imap = new Imap(imapConfig);
+      imap.once('ready', () => {
+        imap.openBox('INBOX', false, () => {
+          imap.search(['UNSEEN', ['SINCE', new Date()]], (err, ress) => {
+            if (err) return reject(err);
+            const f = imap.fetch(ress, { bodies: '' });
+            f.on('message', (msg) => {
+              msg.on('body', (stream) => {
+                simpleParser(stream, async (err, parsed) => {
+                  if (err) return reject(err);
+                  // console.log('--------------------------');
+                  // console.log(`From: ${parsed.from.text} --> ${parsed.text}`);
+                  mesRes.push(parsed.text);
+                });
               });
+
+              // msg.once('attribute', (attr) => {
+              //   const { uid } = attr;
+              //   imap.addFlags(uid, ['\\Seen'], () => {
+              //     console.log('marked as read');
+              //   });
+              // });
+            });
+
+            f.once('error', (ex) => {
+              return reject(ex);
+            });
+
+            f.once('end', () => {
+              console.log('Done fetching all messages');
+              imap.end();
             });
           });
         });
       });
-    });
-    imap.connect();
-  } catch (error) {
-    console.log(`err: ${error}`);
-  }
+
+      imap.once('error', (err) => {
+        return reject(err);
+      });
+
+      imap.once('end', () => {
+        resolve(mesRes);
+        console.log('connected end');
+      });
+
+      imap.connect();
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 
 module.exports = getEmails;

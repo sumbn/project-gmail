@@ -15,7 +15,12 @@ export class HotmailService {
     return this.repoHotmail.findOne({ where: { fb: false } });
   }
 
-  checkMail() {
-    getEmails();
+  async checkMail() {
+    try {
+      const emails = await getEmails();
+      return emails;
+    } catch (error) {
+      console.error('error');
+    }
   }
 }
