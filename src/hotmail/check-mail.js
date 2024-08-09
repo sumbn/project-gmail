@@ -4,15 +4,16 @@ const Imap = require('imap');
 const { simpleParser } = require('mailparser');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
-const imapConfig = {
-  user: 'LucyRichardsGa4e@hotmail.com',
-  password: 'Huanmail123', // Sử dụng mật khẩu ứng dụng tại đây
-  host: 'imap-mail.outlook.com',
-  port: 993,
-  tls: true,
-};
 
 const getEmails = () => {
+  const imapConfig = {
+    user: 'LucyRichardsGa4e@hotmail.com',
+    password: 'Huanmail123', // Sử dụng mật khẩu ứng dụng tại đây
+    host: 'imap-mail.outlook.com',
+    port: 993,
+    tls: true,
+  };
+
   return new Promise((resolve, reject) => {
     try {
       const mesRes = [];

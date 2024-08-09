@@ -23,14 +23,14 @@ export class HotmailService {
         const otp = this.extractOtp(lastEmail);
         if (otp) {
           // console.log('Extracted OTP:', otp);
-          return otp;
+          return { otp: otp };
         } else {
           // console.log('No OTP found in the email.');
-          return null;
+          return { message: 'No OTP found in the email' };
         }
       } else {
         // console.log('No emails found.');
-        return null;
+        return { message: 'No emails found.' };
       }
     } catch (error) {
       // console.error('Error fetching emails:', error);
