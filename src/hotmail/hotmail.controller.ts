@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { HotmailService } from './hotmail.service';
 import { OTPDto } from './dto/get-otp.dto';
 
@@ -11,8 +11,8 @@ export class HotmailController {
     return this.service.getMail();
   }
 
-  @Post('otp')
-  checkEmail(@Body() body: OTPDto) {
+  @Get('otp')
+  checkEmail(@Query() body: OTPDto) {
     return this.service.checkMail(body.email, body.password);
   }
 }
