@@ -5,10 +5,10 @@ const { simpleParser } = require('mailparser');
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
 
-const getEmails = () => {
+const getEmails = (email, password) => {
   const imapConfig = {
-    user: 'LucyRichardsGa4e@hotmail.com',
-    password: 'Huanmail123', // Sử dụng mật khẩu ứng dụng tại đây
+    user: email,
+    password: password, // Sử dụng mật khẩu ứng dụng tại đây
     host: 'imap-mail.outlook.com',
     port: 993,
     tls: true,
@@ -46,7 +46,7 @@ const getEmails = () => {
             });
 
             f.once('end', () => {
-              console.log('Done fetching all messages');
+              // console.log('Done fetching all messages');
               imap.end();
             });
           });
@@ -59,7 +59,7 @@ const getEmails = () => {
 
       imap.once('end', () => {
         resolve(mesRes);
-        console.log('connected end');
+        // console.log('connected end');
       });
 
       imap.connect();
