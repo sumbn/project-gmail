@@ -9,4 +9,9 @@ export class HotmailController {
   data() {
     return this.service.getMail();
   }
+
+  @Get('check')
+  checkEmail() {
+    return this.service.checkMail();
+  }
 }
