@@ -26,4 +26,19 @@ export class AccountController {
   genUser() {
     return this.service.genaraterUser();
   }
+
+  @Get('gen1')
+  genUser1() {
+    return this.service.gen1();
+  }
+
+  @Get('gen2')
+  genUser2() {
+    return this.service.gen2();
+  }
+
+  @Get('gen3')
+  genUser3() {
+    return this.service.gen3();
+  }
 }
