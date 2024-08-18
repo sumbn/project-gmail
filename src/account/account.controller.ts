@@ -14,7 +14,12 @@ export class AccountController {
 
   @Get('getmail')
   getMail() {
-    return this.service.getDataAndCombine();
+    // return this.service.getDataAndCombine();
+  }
+
+  @Get('getmail2')
+  getMail2() {
+    // return this.service.getDataAndCombine();
   }
 
   @Get('gen')

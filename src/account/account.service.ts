@@ -3,15 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
-import { Address, FirstName, LastName, Password } from './entities/data.entity';
+import {
+  Password,
+  RandomValueType,
+  Theme,
+  ThemeType,
+  UserInfoGen,
+} from './entities/data.entity';
 
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account) private repo: Repository<Account>,
-    @InjectRepository(Address) private repoAddress: Repository<Address>,
-    @InjectRepository(FirstName) private repoFN: Repository<FirstName>,
-    @InjectRepository(LastName) private repoLN: Repository<LastName>,
+    @InjectRepository(UserInfoGen) private UIGrepo: Repository<UserInfoGen>,
+    @InjectRepository(Theme) private repoTheme: Repository<Theme>,
     @InjectRepository(Password) private repoPass: Repository<Password>,
   ) {}
 
@@ -19,83 +24,105 @@ export class AccountService {
     return this.repo.save(registerDto);
   }
 
-  async getDataAndCombine(): Promise<string[]> {
-    const addresses = await this.repoAddress.find();
-    const firstNames = await this.repoFN.find();
-    const lastNames = await this.repoLN.find();
-
-    const combinedData = this.combineData(firstNames, lastNames, addresses);
-    return combinedData;
-  }
-
-  private combineData(
-    firstNames: FirstName[],
-    lastNames: LastName[],
-    addresses: Address[],
-  ): string[] {
-    const result: string[] = [];
-
-    firstNames.forEach((firstName) => {
-      lastNames.forEach((lastName) => {
-        addresses.forEach((address) => {
-          const email = this.generateEmail(
-            firstName.name,
-            lastName.name,
-            address.address,
-          );
-          result.push(email);
-        });
-      });
-    });
-
-    return result;
-  }
-
-  private generateEmail(
-    firstName: string,
-    lastName: string,
-    address: string,
-  ): string {
-    const elements = [firstName, lastName, address];
-    const shuffledElements = this.shuffleArray(elements);
-    const email = `${shuffledElements.join('')}@gmail.com`;
-    return email;
-  }
-
-  private shuffleArray(array: any[]): any[] {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
-
   /** generate object user  */
+  getRandomTheme(): ThemeType {
+    const themes = Object.values(ThemeType);
+    const randomIndex = Math.floor(Math.random() * themes.length);
+    return themes[randomIndex] as ThemeType;
+  }
+
+  // Hàm để tạo username tương tự như logic Python
+  async generateUsername(): Promise<string> {
+    // Tạo số ngẫu nhiên từ 3 đến 5 chữ số
+    const suffixLength = Math.floor(Math.random() * 3) + 3;
+    const randomSuffix1 = Math.floor(
+      Math.pow(10, suffixLength - 1) +
+        Math.random() *
+          (Math.pow(10, suffixLength) - Math.pow(10, suffixLength - 1)),
+    );
+    const randomSuffix2 = Math.floor(
+      Math.pow(10, suffixLength - 1) +
+        Math.random() *
+          (Math.pow(10, suffixLength) - Math.pow(10, suffixLength - 1)),
+    );
+
+    // Chọn các từ ngẫu nhiên từ các chủ đề khác nhau
+    const nameTheme1 = this.getRandomTheme();
+    const firstWord = await this.getDataRandomFromDB(
+      this.repoTheme,
+      'theme',
+      'theme',
+      nameTheme1,
+    );
+
+    const nameTheme2 = this.getRandomTheme();
+    const secondWord = await this.getDataRandomFromDB(
+      this.repoTheme,
+      'theme',
+      'theme',
+      nameTheme2,
+    );
+
+    const nameTheme3 = this.getRandomTheme();
+    const thirdWord = await this.getDataRandomFromDB(
+      this.repoTheme,
+      'theme',
+      'theme',
+      nameTheme3,
+    );
+
+    // Tạo định dạng giống email như trong hình
+    const username = `${firstWord}${randomSuffix1}.${secondWord}_${thirdWord}${randomSuffix2}`;
+
+    return username;
+  }
+
+  // Hàm capitalize giống như Python
+  capitalize(word: string): string {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }
+
+  async getDataRandomFromDB(
+    repo: Repository<any>,
+    tableName: string,
+    columnName: string,
+    columnValue: string,
+  ): Promise<string> {
+    const randomData = await repo
+      .createQueryBuilder(tableName)
+      .select(`${tableName}.value`)
+      .where(`${tableName}.${columnName} = :columnValue`, { columnValue })
+      .orderBy('RAND()')
+      .limit(1)
+      .getOne();
+
+    return randomData?.value ?? null;
+  }
 
   genaraterUser = async () => {
-    const firstName = (await this.repoFN.find()).map((fn) => fn.name);
-    const lastName = (await this.repoLN.find()).map((ln) => ln.name);
-    const address = (await this.repoAddress.find()).map((add) => add.address);
-    const randomFN = this.getRandomElement(firstName);
-    const randomLN = this.getRandomElement(lastName);
-    const randomAdd = this.getRandomElement(address);
-    const [randomBirthday, dateBirthday] = this.getRandomBirthDate();
-    const passwords = (await this.repoPass.find()).map((p) => p.password);
-    const password = this.getRandomElement(passwords);
+    const randomFN = await this.getDataRandomFromDB(
+      this.UIGrepo,
+      'user_info_gen',
+      'type',
+      RandomValueType.FIRST_NAME,
+    );
+    const randomLN = await this.getDataRandomFromDB(
+      this.UIGrepo,
+      'user_info_gen',
+      'type',
+      RandomValueType.LAST_NAME,
+    );
+    const password = await this.repoPass
+      .createQueryBuilder('password')
+      .orderBy('RAND()') // MySQL
+      .limit(1)
+      .getOne();
 
     return {
-      first_name: randomFN,
-      last_name: randomLN,
-      name: randomFN + ' ' + randomLN,
-      address: randomAdd,
-      birth_day: randomBirthday,
-      email: this.generateRandomEmail(
-        randomFN,
-        randomLN,
-        randomAdd,
-        dateBirthday,
-      ),
-      password: password,
+      firstName: randomFN,
+      lastName: randomLN,
+      username: (await this.generateUsername()) + '@gmail.com',
+      password: password.password,
     };
   };
 

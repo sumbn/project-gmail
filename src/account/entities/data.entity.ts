@@ -1,30 +1,51 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class FirstName {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  name: string;
+export enum RandomValueType {
+  FIRST_NAME = 'firstName',
+  LAST_NAME = 'lastName',
 }
 
 @Entity()
-export class LastName {
+export class UserInfoGen {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({
+    type: 'enum',
+    enum: RandomValueType,
+  })
+  type: RandomValueType;
+
   @Column()
-  name: string;
+  value: string;
+}
+
+export enum ThemeType {
+  ANIMAL = 'animal',
+  PLANET = 'planet',
+  EARTH = 'earth',
+  TREE = 'tree',
+  NATURE = 'nature',
+  SPORT = 'sport',
+  CITY = 'city',
+  TRAVEL = 'travel',
+  HOBBY = 'hobby',
+  JOB = 'job',
 }
 
 @Entity()
-export class Address {
+export class Theme {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({
+    type: 'enum',
+    enum: ThemeType,
+  })
+  theme: ThemeType;
+
   @Column()
-  address: string;
+  value: string;
 }
 
 @Entity()
