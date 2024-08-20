@@ -27,6 +27,7 @@ import { AppService } from './app.service';
 import { Password, Theme, UserInfoGen } from './account/entities/data.entity';
 import { HotmailModule } from './hotmail/hotmail.module';
 import { HotMail } from './hotmail/entities/hotmail.entity';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -46,6 +47,7 @@ import { HotMail } from './hotmail/entities/hotmail.entity';
     }),
     AccountModule,
     HotmailModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

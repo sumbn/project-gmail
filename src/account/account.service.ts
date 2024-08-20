@@ -10,6 +10,7 @@ import {
   ThemeType,
   UserInfoGen,
 } from './entities/data.entity';
+import { HotMail } from '../hotmail/entities/hotmail.entity';
 
 @Injectable()
 export class AccountService {
@@ -18,6 +19,7 @@ export class AccountService {
     @InjectRepository(UserInfoGen) private UIGrepo: Repository<UserInfoGen>,
     @InjectRepository(Theme) private repoTheme: Repository<Theme>,
     @InjectRepository(Password) private repoPass: Repository<Password>,
+    @InjectRepository(HotMail) private repoHotmail: Repository<HotMail>,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<Account> {
@@ -57,10 +59,20 @@ export class AccountService {
       .limit(1)
       .getOne();
 
+    const randomMail = await this.getDataRandomNotCondition(
+      this.repoHotmail,
+      'hot_mail',
+      'email',
+    );
+
+    const [dayOfBirth] = this.getRandomBirthDate();
+
     return {
       firstName: randomFN,
       lastName: randomLN,
-      username: (await this.generateUsername()) + '@gmail.com',
+      dayOfBirth,
+      email: (await this.generateUsername()) + '@gmail.com',
+      receiveMail: randomMail,
       password: password.password,
     };
   };
@@ -91,15 +103,22 @@ export class AccountService {
       .limit(1)
       .getOne();
 
-    const [birthday, birthDate] = this.getRandomBirthDate();
+    const [dayOfBirth, birthDate] = this.getRandomBirthDate();
+
+    const randomMail = await this.getDataRandomNotCondition(
+      this.repoHotmail,
+      'hot_mail',
+      'email',
+    );
 
     const email = this.generateRandomEmail(fn, ln, add, birthDate);
     return {
       fn,
       ln,
       add,
-      birthday,
+      dayOfBirth,
       email,
+      receiveMail: randomMail,
       password: password.password,
     };
   };
@@ -119,15 +138,23 @@ export class AccountService {
       .limit(1)
       .getOne();
 
-    const [birthday, birthDate] = this.getRandomBirthDate();
+    const [dayOfBirth, birthDate] = this.getRandomBirthDate();
 
     const email = this.generateRandomEmail(fn, ln, add, birthDate);
+
+    const randomMail = await this.getDataRandomNotCondition(
+      this.repoHotmail,
+      'hot_mail',
+      'email',
+    );
+
     return {
       fn,
       ln,
       add,
-      birthday,
+      dayOfBirth,
       email,
+      receiveMail: randomMail,
       password: password.password,
     };
   };
@@ -182,6 +209,21 @@ export class AccountService {
 
   private capitalize(word: string): string {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }
+
+  private async getDataRandomNotCondition(
+    repo: Repository<any>,
+    tableName: string,
+    columnName: string,
+  ): Promise<string | null> {
+    const randomData = await repo
+      .createQueryBuilder(tableName)
+      .select(`${tableName}.${columnName}`) // Chọn cột email
+      .orderBy('RAND()') // Lấy ngẫu nhiên
+      .limit(1) // Giới hạn 1 bản ghi
+      .getOne();
+
+    return randomData?.[columnName] ?? null;
   }
 
   private async getDataRandomFromDB(
