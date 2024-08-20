@@ -65,12 +65,12 @@ export class AccountService {
       'email',
     );
 
-    const [dayOfBirth] = this.getRandomBirthDate();
+    const [dateOfBirth] = this.getRandomBirthDate();
 
     return {
       firstName: randomFN,
       lastName: randomLN,
-      dayOfBirth,
+      dateOfBirth,
       email: (await this.generateUsername()) + '@gmail.com',
       receiveMail: randomMail,
       password: password.password,
@@ -103,7 +103,7 @@ export class AccountService {
       .limit(1)
       .getOne();
 
-    const [dayOfBirth, birthDate] = this.getRandomBirthDate();
+    const [dateOfBirth, birthDate] = this.getRandomBirthDate();
 
     const randomMail = await this.getDataRandomNotCondition(
       this.repoHotmail,
@@ -116,7 +116,7 @@ export class AccountService {
       fn,
       ln,
       add,
-      dayOfBirth,
+      dateOfBirth,
       email,
       receiveMail: randomMail,
       password: password.password,
@@ -138,7 +138,7 @@ export class AccountService {
       .limit(1)
       .getOne();
 
-    const [dayOfBirth, birthDate] = this.getRandomBirthDate();
+    const [dateOfBirth, birthDate] = this.getRandomBirthDate();
 
     const email = this.generateRandomEmail(fn, ln, add, birthDate);
 
@@ -152,7 +152,7 @@ export class AccountService {
       fn,
       ln,
       add,
-      dayOfBirth,
+      dateOfBirth,
       email,
       receiveMail: randomMail,
       password: password.password,
