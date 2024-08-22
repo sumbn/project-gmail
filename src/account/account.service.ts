@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterAccountDto } from './dto/registerAccount.dto';
 import {
   Password,
   RandomValueType,
@@ -22,7 +22,7 @@ export class AccountService {
     @InjectRepository(HotMail) private repoHotmail: Repository<HotMail>,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<Account> {
+  async register(registerDto: RegisterAccountDto): Promise<Account> {
     return this.repo.save(registerDto);
   }
 
