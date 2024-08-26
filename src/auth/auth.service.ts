@@ -7,6 +7,7 @@ import { LoginDto, RegisterAuthDto } from './dto/auth.dto';
 import { hash, compare } from 'bcrypt';
 import { LoginResponse } from './models/auth.model';
 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -79,6 +80,10 @@ export class AuthService {
     });
 
     return {
+      user : {
+        name: user.userName,
+        email: user.email
+      },
       accessToken,
       refreshToken,
     };
