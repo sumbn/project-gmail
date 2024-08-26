@@ -19,8 +19,13 @@ export class UserController {
     return this.service.create(body);
   }
 
-  @Get()
+  @Get('id')
   getUser(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
+  }
+
+  @Get()
+  getUsers(){
+    return this.service.findAll()
   }
 }

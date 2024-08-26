@@ -26,6 +26,10 @@ export class AccountService {
     return this.repo.save(registerDto);
   }
 
+  async findAll(): Promise<Account[]> {
+    return await this.repo.find();
+  }
+
   genaraterUser() {
     const randomGen = Math.floor(Math.random() * 3);
     switch (randomGen) {
