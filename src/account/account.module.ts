@@ -3,14 +3,9 @@ import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
-import { Password, Theme, UserInfoGen } from './entities/data.entity';
-import { HotMail } from '../hotmail/entities/hotmail.entity';
-// import { Address, FirstName, LastName, Password } from './entities/data.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Account, UserInfoGen, Theme, Password, HotMail]),
-  ],
+  imports: [TypeOrmModule.forFeature([Account])],
   controllers: [AccountController],
   providers: [AccountService],
 })

@@ -56,3 +56,12 @@ export class Password {
   @Column()
   password: string;
 }
+
+@Entity()
+export class KeyWordSearch {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  value: string;
+}

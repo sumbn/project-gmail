@@ -7,6 +7,7 @@
 // import { HotmailModule } from './hotmail/hotmail.module';
 // import { UserModule } from './user/user.module';
 // import { AuthModule } from './auth/auth.module';
+// import { GenModule } from './gen/gen.module';
 // @Module({
 //   imports: [
 //     TypeOrmModule.forRoot(dataSourceOptions),
@@ -14,6 +15,7 @@
 //     HotmailModule,
 //     UserModule,
 //     AuthModule,
+//     GenModule,
 //   ],
 //   controllers: [AppController],
 //   providers: [AppService],
@@ -28,12 +30,19 @@ import { Account } from './account/entities/account.entity';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { Password, Theme, UserInfoGen } from './account/entities/data.entity';
+import {
+  KeyWordSearch,
+  Password,
+  Theme,
+  UserInfoGen,
+} from './gen/entities/data.entity';
 import { HotmailModule } from './hotmail/hotmail.module';
 import { HotMail } from './hotmail/entities/hotmail.entity';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
+import { GenModule } from './gen/gen.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -46,7 +55,15 @@ import { User } from './user/entities/user.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE_NAME'),
-        entities: [Account, UserInfoGen, Theme, Password, HotMail, User],
+        entities: [
+          Account,
+          UserInfoGen,
+          Theme,
+          Password,
+          HotMail,
+          User,
+          KeyWordSearch,
+        ],
         synchronize: false,
       }),
       inject: [ConfigService],
@@ -55,6 +72,7 @@ import { User } from './user/entities/user.entity';
     HotmailModule,
     UserModule,
     AuthModule,
+    GenModule,
   ],
   controllers: [AppController],
   providers: [AppService],
