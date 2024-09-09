@@ -205,7 +205,7 @@ export class GenService {
       nameTheme3,
     );
 
-    const username = `${firstWord}${randomSuffix1}.${secondWord}_${thirdWord}${randomSuffix2}`;
+    const username = `${firstWord}${randomSuffix1}.${secondWord}${thirdWord}${randomSuffix2}`;
 
     return username;
   }
