@@ -74,7 +74,7 @@ export class GenService {
       firstName: randomFN,
       lastName: randomLN,
       dateOfBirth: dateOfBirth,
-      email: (await this.generateUsername()) + '@gmail.com',
+      email: await this.generateUsername(),
       receiveMail: randomMail,
       password: password.password,
     };
@@ -310,7 +310,7 @@ export class GenService {
     ];
     const selectedPattern = this.getRandomElement(patterns);
     const nomalize = this.normalizeString(selectedPattern);
-    return this.removeVietnameseTones(nomalize) + '@gmail.com';
+    return this.removeVietnameseTones(nomalize);
   }
 
   private characterPairs = [
