@@ -31,6 +31,9 @@ export class Account {
   @Column({ name: 'is_fb_checked', default: false })
   isFbChecked: boolean;
 
+  @Column({ name: 'is_verify', default: false })
+  isVerify: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 
