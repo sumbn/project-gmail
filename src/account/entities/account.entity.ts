@@ -19,13 +19,13 @@ export class Account {
   @Column()
   password: string;
 
-  @Column({ name: 'phone_number' })
+  @Column({ name: 'phone_number', nullable: true })
   phoneNumber: string;
 
-  @Column({ name: 'phone_model' })
+  @Column({ name: 'phone_model', nullable: true })
   phoneModel: string;
 
-  @Column({ name: 'created_by' })
+  @Column({ name: 'created_by', nullable: true })
   createdBy: string;
 
   @Column({ name: 'is_fb_checked', default: false })
