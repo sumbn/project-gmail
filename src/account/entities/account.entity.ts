@@ -19,16 +19,16 @@ export class Account {
   @Column()
   password: string;
 
-  @Column()
+  @Column({ name: 'phone_number' })
   phoneNumber: string;
 
-  @Column()
+  @Column({ name: 'phone_model' })
   phoneModel: string;
 
-  @Column()
-  created_by: string;
+  @Column({ name: 'created_by' })
+  createdBy: string;
 
-  @Column({ default: false })
+  @Column({ name: 'is_fb_checked', default: false })
   isFbChecked: boolean;
 
   @CreateDateColumn()
