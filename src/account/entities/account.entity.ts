@@ -20,10 +20,16 @@ export class Account {
   password: string;
 
   @Column()
-  address: string;
+  phoneNumber: string;
 
-  @Column({ default: true })
-  isActive: boolean;
+  @Column()
+  phoneModel: string;
+
+  @Column()
+  created_by: string;
+
+  @Column({ default: false })
+  isFbChecked: boolean;
 
   @CreateDateColumn()
   created_at: Date;
