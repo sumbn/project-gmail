@@ -9,6 +9,7 @@ import {
   UserInfoGen,
 } from './entities/data.entity';
 import { HotMail } from '../hotmail/entities/hotmail.entity';
+import { JunkGmail } from './entities/junkGmail.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HotMail } from '../hotmail/entities/hotmail.entity';
       Password,
       HotMail,
       KeyWordSearch,
+      JunkGmail,
     ]),
   ],
   controllers: [GenController],

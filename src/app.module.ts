@@ -42,6 +42,7 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/entities/user.entity';
 import { GenModule } from './gen/gen.module';
+import { JunkGmail } from './gen/entities/junkGmail.entity';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { GenModule } from './gen/gen.module';
           HotMail,
           User,
           KeyWordSearch,
+          JunkGmail,
         ],
         synchronize: false,
       }),

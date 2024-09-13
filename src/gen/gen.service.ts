@@ -10,6 +10,7 @@ import {
   ThemeType,
   UserInfoGen,
 } from './entities/data.entity';
+import { JunkGmail } from './entities/junkGmail.entity';
 
 @Injectable()
 export class GenService {
@@ -19,7 +20,16 @@ export class GenService {
     @InjectRepository(Password) private repoPass: Repository<Password>,
     @InjectRepository(HotMail) private repoHotmail: Repository<HotMail>,
     @InjectRepository(KeyWordSearch) private repoKWS: Repository<KeyWordSearch>,
+    @InjectRepository(JunkGmail) private repoJunkGmail: Repository<JunkGmail>,
   ) {}
+
+  getRandomJunkGmail = async () => {
+    return await this.repoJunkGmail
+      .createQueryBuilder('email')
+      .orderBy('RAND()')
+      .limit(1)
+      .getOne();
+  };
 
   genKeyWordSearch = async () => {
     return await this.repoKWS

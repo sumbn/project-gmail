@@ -29,4 +29,9 @@ export class GenController {
   genKeyWordSearch() {
     return this.service.genKeyWordSearch();
   }
+
+  @Get('junk-gmail')
+  getRandomJunkGmail() {
+    return this.service.getRandomJunkGmail();
+  }
 }
