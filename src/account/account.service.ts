@@ -13,34 +13,42 @@ export class AccountService {
   }
 
   async getMailToFeed() {
-    const lockTimeout = new Date(Date.now() - 5 * 60 * 1000);
+    const lockTimeout = new Date(Date.now() - 15 * 60 * 1000);
 
     const queryRunner = this.repo.manager.connection.createQueryRunner();
     await queryRunner.startTransaction();
 
     try {
-      const uncheckedAccounts = await queryRunner.manager.find(Account, {
+      const count = await this.repo.count({
         where: [
-          { isLive: false, isLocked: false },
-          { isLive: false, lockAt: LessThan(lockTimeout) },
+          { isLive: false, isLocked: false }, // Tài khoản chưa bị khóa
+          { isLive: false, isLocked: true, lockAt: LessThan(lockTimeout) }, // Tài khoản bị khóa quá 15 phút
         ],
       });
 
-      if (uncheckedAccounts.length === 0) {
+      if (count === 0) {
         await queryRunner.commitTransaction();
         return { message: 'No unchecked accounts available' };
       }
 
-      const randomAccount =
-        uncheckedAccounts[Math.floor(Math.random() * uncheckedAccounts.length)];
+      const randomOffset = Math.floor(Math.random() * count);
+      const randomAccounts = await this.repo.find({
+        where: { isLive: false },
+        skip: randomOffset,
+        take: 1,
+      });
 
-      randomAccount.isLocked = true;
-      randomAccount.lockAt = new Date();
-      await queryRunner.manager.save(randomAccount);
+      if (!randomAccounts) {
+        throw new Error('No account found'); // Kiểm tra nếu không tìm thấy bản ghi
+      }
+
+      randomAccounts[0].isLocked = true;
+      randomAccounts[0].lockAt = new Date();
+      await queryRunner.manager.save(randomAccounts);
 
       await queryRunner.commitTransaction();
 
-      return randomAccount;
+      return randomAccounts;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
