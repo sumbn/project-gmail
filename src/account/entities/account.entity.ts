@@ -28,15 +28,21 @@ export class Account {
   @Column({ name: 'created_by', nullable: true })
   createdBy: string;
 
-  @Column({ name: 'is_fb_checked', default: false })
-  isFbChecked: boolean;
+  @Column({ name: 'is_Live', default: false })
+  isLive: boolean;
 
   @Column({ name: 'is_verify', default: false })
   isVerify: boolean;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ name: 'is_locked', default: false })
+  isLocked: boolean;
 
-  @CreateDateColumn()
-  updated_at: Date;
+  @Column({ name: 'locked_at', nullable: true })
+  lockAt: Date;
+
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @CreateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }
