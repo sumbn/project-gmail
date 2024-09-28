@@ -25,24 +25,27 @@ export class Account {
   @Column({ name: 'phone_model', nullable: true })
   phoneModel: string;
 
-  @Column({ name: 'created_by', nullable: true })
-  createdBy: string;
-
   @Column({ name: 'is_Live', default: false })
   isLive: boolean;
 
   @Column({ name: 'is_verify', default: false })
   isVerify: boolean;
 
-  @Column({ name: 'is_locked', default: false })
-  isLocked: boolean;
+  @Column({ name: 'recovery_mail', nullable: true })
+  recoveryMail: string;
 
-  @Column({ name: 'locked_at', nullable: true })
-  lockAt: Date;
+  @Column({ name: 'created_by', nullable: true })
+  createdBy: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @CreateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @Column({ name: 'is_locked', default: false })
+  isLocked: boolean;
+
+  @Column({ name: 'locked_at', nullable: true })
+  lockAt: Date;
 }
