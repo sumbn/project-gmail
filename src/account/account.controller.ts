@@ -1,7 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { RegisterAccountDto } from './dto/registerAccount.dto';
 import { AccountService } from './account.service';
 import { Account } from './entities/account.entity';
+import { FilterAccountDto } from './dto/filter-account.dto';
 
 @Controller('account')
 export class AccountController {
@@ -23,7 +32,7 @@ export class AccountController {
   }
 
   @Get()
-  getMail() {
-    return this.service.findAll();
+  getMail(@Query() query: FilterAccountDto) {
+    return this.service.findAll(query);
   }
 }

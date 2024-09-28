@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
-import { LessThan, Repository } from 'typeorm';
+import { LessThan, Like, Repository } from 'typeorm';
 import { RegisterAccountDto } from './dto/registerAccount.dto';
+import { FilterAccountDto } from './dto/filter-account.dto';
 
 @Injectable()
 export class AccountService {
@@ -73,7 +74,27 @@ export class AccountService {
     return { message: 'Account checked successfully', account };
   }
 
-  async findAll(): Promise<Account[]> {
-    return await this.repo.find();
+  async findAll(query: FilterAccountDto): Promise<any> {
+    const items_per_page = Number(query.items_per_page) || 50;
+    const page = Number(query.page) || 1;
+    const skip = (page - 1) * items_per_page;
+    const keyword = query.search || '';
+    const [res, total] = await this.repo.findAndCount({
+      order: { createdAt: 'DESC' },
+      take: items_per_page,
+      skip: skip,
+      // select: ['id', 'email', 'password','password']
+    });
+    const lastPage = Math.ceil(total / items_per_page);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const prevPage = page - 1 < 1 ? null : page - 1;
+    return {
+      data: res,
+      total,
+      currentPage: page,
+      nextPage,
+      prevPage,
+      lastPage,
+    };
   }
 }
