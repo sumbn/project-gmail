@@ -11,7 +11,9 @@ import { RegisterAccountDto } from './dto/registerAccount.dto';
 import { AccountService } from './account.service';
 import { Account } from './entities/account.entity';
 import { FilterAccountDto } from './dto/filter-account.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Account')
 @Controller('account')
 export class AccountController {
   constructor(private service: AccountService) {}

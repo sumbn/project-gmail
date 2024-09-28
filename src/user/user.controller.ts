@@ -9,7 +9,10 @@ import {
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/registerUser.dto';
 import { User } from './entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private service: UserService) {}
@@ -25,7 +28,7 @@ export class UserController {
   }
 
   @Get()
-  getUsers(){
-    return this.service.findAll()
+  getUsers() {
+    return this.service.findAll();
   }
 }

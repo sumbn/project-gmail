@@ -1,6 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { GenService } from './gen.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Gen')
 @Controller('gen')
 export class GenController {
   constructor(private service: GenService) {}

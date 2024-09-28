@@ -3,7 +3,9 @@ import { AuthService } from './auth.service';
 import { LoginDto, RegisterAuthDto } from './dto/auth.dto';
 import { User } from '../user/entities/user.entity';
 import { LoginResponse } from './models/auth.model';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -14,6 +16,8 @@ export class AuthController {
   }
 
   @Post('login')
+  @ApiResponse({ status: 201, description: 'Login successfully' })
+  @ApiResponse({ status: 401, description: 'Login fail' })
   login(@Body() loginUserDto: LoginDto): Promise<LoginResponse> {
     return this.authService.login(loginUserDto);
   }
