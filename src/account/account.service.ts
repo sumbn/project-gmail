@@ -80,7 +80,7 @@ export class AccountService {
     const skip = (page - 1) * items_per_page;
     const keyword = query.search || '';
     const [res, total] = await this.repo.findAndCount({
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'ASC' },
       take: items_per_page,
       skip: skip,
       // select: ['id', 'email', 'password','password']
