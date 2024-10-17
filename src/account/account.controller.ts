@@ -35,6 +35,7 @@ export class AccountController {
 
   @Get()
   getMail(@Query() query: FilterAccountDto) {
-    return this.service.findAll(query);
+    // return this.service.findAll(query);
+    return this.service.paginationAndFilter(query);
   }
 }

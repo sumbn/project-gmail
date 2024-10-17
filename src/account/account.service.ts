@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
-import { LessThan, Like, Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import { RegisterAccountDto } from './dto/registerAccount.dto';
 import { FilterAccountDto } from './dto/filter-account.dto';
+import { PaginatedResult } from './dto/paginated-result.dto';
 
 @Injectable()
 export class AccountService {
@@ -22,8 +23,8 @@ export class AccountService {
     try {
       const count = await this.repo.count({
         where: [
-          { isLive: false, isLocked: false }, // Tài khoản chưa bị khóa
-          { isLive: false, isLocked: true, lockAt: LessThan(lockTimeout) }, // Tài khoản bị khóa quá 15 phút
+          { isLive: false, isLocked: false },
+          { isLive: false, isLocked: true, lockAt: LessThan(lockTimeout) },
         ],
       });
 
@@ -75,19 +76,61 @@ export class AccountService {
   }
 
   async findAll(query: FilterAccountDto): Promise<any> {
-    const items_per_page = Number(query.items_per_page) || 50;
+    const itemsPerPage = Number(query.items_per_page) || 50;
     const page = Number(query.page) || 1;
-    const skip = (page - 1) * items_per_page;
-    const keyword = query.search || '';
+    const skip = (page - 1) * itemsPerPage;
+
+    // const keyword = query.search || '';
+
     const [res, total] = await this.repo.findAndCount({
       order: { createdAt: 'ASC' },
-      take: items_per_page,
+      take: itemsPerPage,
       skip: skip,
       // select: ['id', 'email', 'password','password']
     });
-    const lastPage = Math.ceil(total / items_per_page);
+    const lastPage = Math.ceil(total / itemsPerPage);
     const nextPage = page + 1 > lastPage ? null : page + 1;
     const prevPage = page - 1 < 1 ? null : page - 1;
+    return {
+      data: res,
+      total,
+      currentPage: page,
+      nextPage,
+      prevPage,
+      lastPage,
+    };
+  }
+
+  async paginationAndFilter(
+    query: FilterAccountDto,
+  ): Promise<PaginatedResult<Account>> {
+    const itemsPerPage = Number(query.items_per_page) || 50;
+    const page = Number(query.page) || 1;
+    const skip = (page - 1) * itemsPerPage;
+
+    const keyword = query.search ? query.search.trim() : '';
+
+    const queryBuilder = this.repo.createQueryBuilder('account');
+
+    if (keyword) {
+      queryBuilder.where(
+        'account.name LIKE :keyword OR account.email LIKE :keyword',
+        {
+          keyword: `%${keyword}%`,
+        },
+      );
+    }
+
+    const [res, total] = await queryBuilder
+      .orderBy('account.createdAt', 'ASC')
+      .take(itemsPerPage)
+      .skip(skip)
+      .getManyAndCount();
+
+    const lastPage = Math.ceil(total / itemsPerPage);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const prevPage = page - 1 < 1 ? null : page - 1;
+
     return {
       data: res,
       total,
