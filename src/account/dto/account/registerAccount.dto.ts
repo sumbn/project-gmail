@@ -1,34 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty } from 'class-validator';
-
 export class RegisterAccountDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  password: string;
-
-  @ApiProperty({ required: false })
-  phoneNumber?: string;
-
-  @ApiProperty({ required: false })
-  phoneModel?: string;
-
-  @ApiProperty({ required: false })
-  isLive?: boolean;
-
-  @ApiProperty({ required: false })
-  isVerify?: boolean;
-
-  @ApiProperty({ required: false })
-  recoveryMail?: string;
-
-  @ApiProperty({ required: false })
-  createdBy?: string;
+  userId?: number; // Nếu user đã tồn tại, gửi userId, nếu không có thì sẽ tạo mới user
+  platformId: number; // Id của nền tảng (Gmail, Facebook, v.v.)
+  username: string; // Email cho Gmail hoặc Username cho Facebook
+  password: string; // Mật khẩu
+  statusId: number; // Trạng thái của tài khoản (ví dụ: active, suspended)
+  name?: string; // Tên của user, chỉ cần khi tạo mới user
 }

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,7 @@ import { AccountStatus } from './accountStatus.entity';
 import { AccountUser } from './accountUser.entity';
 
 @Entity()
+@Index(['username', 'platform'], { unique: true })
 export class AccountUserPlatform {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,8 +23,8 @@ export class AccountUserPlatform {
   @ManyToOne(() => AccountPlatform)
   platform: AccountPlatform;
 
-  @Column({ unique: true })
-  email: string;
+  @Column()
+  username: string;
 
   @Column()
   password: string;

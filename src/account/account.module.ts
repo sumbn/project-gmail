@@ -13,6 +13,8 @@ import { AccountStatusController } from './controller/accountStatus.controller';
 import { AccountStatusServices } from './service/accountStatus.service';
 import { AccountPlatformController } from './controller/accountPlatform.controller';
 import { AccountPlatformService } from './service/accountPlatform.service';
+import { AccountUserController } from './controller/accountUser.controller';
+import { AccountUserService } from './service/accountUser.service';
 
 @Module({
   imports: [
@@ -28,7 +30,13 @@ import { AccountPlatformService } from './service/accountPlatform.service';
     AccountController,
     AccountStatusController,
     AccountPlatformController,
+    AccountUserController,
   ],
-  providers: [AccountService, AccountStatusServices, AccountPlatformService],
+  providers: [
+    AccountService,
+    AccountStatusServices,
+    AccountPlatformService,
+    AccountUserService,
+  ],
 })
 export class AccountModule {}

@@ -13,7 +13,7 @@ export class AccountUser {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @OneToMany(() => AccountUserPlatform, (row) => row.user)
