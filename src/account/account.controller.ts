@@ -1,41 +1,30 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { RegisterAccountDto } from './dto/registerAccount.dto';
-import { AccountService } from './account.service';
-import { Account } from './entities/account.entity';
-import { FilterAccountDto } from './dto/filter-account.dto';
+import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { AccountService } from './account.service';
 
 @ApiTags('Account')
 @Controller('account')
 export class AccountController {
   constructor(private service: AccountService) {}
 
-  @Post('register')
-  register(@Body() body: RegisterAccountDto): Promise<Account> {
-    return this.service.register(body);
-  }
+  // @Post('register')
+  // register(@Body() body: RegisterAccountDto): Promise<GmailAccount> {
+  //   return this.service.register(body);
+  // }
 
-  @Get('gmail-feed')
-  gmailToFeed() {
-    return this.service.getMailToFeed();
-  }
+  // @Get('gmail-feed')
+  // gmailToFeed() {
+  //   return this.service.getMailToFeed();
+  // }
 
-  @Patch('check-account/:id')
-  updateLiveGmail(@Param('id') id: string) {
-    return this.service.updateLive(Number(id));
-  }
+  // @Patch('check-account/:id')
+  // updateLiveGmail(@Param('id') id: string) {
+  //   return this.service.updateLive(Number(id));
+  // }
 
-  @Get()
-  getMail(@Query() query: FilterAccountDto) {
-    // return this.service.findAll(query);
-    return this.service.paginationAndFilter(query);
-  }
+  // @Get()
+  // getMail(@Query() query: FilterAccountDto) {
+  //   // return this.service.findAll(query);
+  //   return this.service.paginationAndFilter(query);
+  // }
 }

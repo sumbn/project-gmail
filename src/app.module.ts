@@ -26,23 +26,28 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Account } from './account/entities/account.entity';
 import { AccountModule } from './account/account.module';
+import {
+  AccountPlatform,
+  AccountStatus,
+  AccountUser,
+  AccountUserPlatform,
+} from './account/entities';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import {
   KeyWordSearch,
   Password,
   Theme,
   UserInfoGen,
 } from './gen/entities/data.entity';
-import { HotmailModule } from './hotmail/hotmail.module';
-import { HotMail } from './hotmail/entities/hotmail.entity';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { User } from './user/entities/user.entity';
-import { GenModule } from './gen/gen.module';
 import { JunkGmail } from './gen/entities/junkGmail.entity';
+import { GenModule } from './gen/gen.module';
+import { HotMail } from './hotmail/entities/hotmail.entity';
+import { HotmailModule } from './hotmail/hotmail.module';
+import { User } from './user/entities/user.entity';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -57,7 +62,6 @@ import { JunkGmail } from './gen/entities/junkGmail.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE_NAME'),
         entities: [
-          Account,
           UserInfoGen,
           Theme,
           Password,
@@ -65,6 +69,10 @@ import { JunkGmail } from './gen/entities/junkGmail.entity';
           User,
           KeyWordSearch,
           JunkGmail,
+          AccountPlatform,
+          AccountStatus,
+          AccountUser,
+          AccountUserPlatform,
         ],
         synchronize: false,
       }),

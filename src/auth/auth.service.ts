@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto, RegisterAuthDto } from './dto/auth.dto';
 import { hash, compare } from 'bcrypt';
-import { LoginResponse } from './models/auth.model';
-
+import { JwtPayload } from './dto/jwtPayload.dto';
+import { LoginResponse } from './dto/loginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,7 +63,7 @@ export class AuthService {
     }
 
     //gen
-    const payload = {
+    const payload: JwtPayload = {
       id: user.id,
       name: user.userName,
       email: user.email,
@@ -80,12 +80,26 @@ export class AuthService {
     });
 
     return {
-      user : {
+      user: {
         name: user.userName,
-        email: user.email
+        email: user.email,
       },
       accessToken,
       refreshToken,
     };
+  }
+
+  async verifyToken(token: string): Promise<JwtPayload | Error> {
+    try {
+      const decoded = await this.jwtService.verifyAsync(token, {
+        secret: '12345',
+      });
+      return decoded;
+    } catch (error) {
+      throw new HttpException(
+        { message: 'Invalid or expired token' },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
   }
 }
