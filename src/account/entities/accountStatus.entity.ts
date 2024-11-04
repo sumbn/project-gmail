@@ -6,10 +6,10 @@ export class AccountStatus {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @ManyToOne(() => AccountPlatform, { nullable: true })

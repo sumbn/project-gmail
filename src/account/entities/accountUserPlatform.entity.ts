@@ -35,6 +35,6 @@ export class AccountUserPlatform {
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ nullable: true })
   updatedAt: Date;
 }

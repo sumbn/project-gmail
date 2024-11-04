@@ -22,33 +22,35 @@ export class AccountService {
     private readonly statusRepository: Repository<AccountStatus>,
   ) {}
 
-  // Hàm để tạo tài khoản cho một user trên một nền tảng
   async createUserPlatformAccount(
     data: RegisterAccountDto,
   ): Promise<AccountUserPlatform> {
-    // Kiểm tra xem nền tảng có tồn tại không
-    const platform = await this.platformRepository.findOne({
+    const existingAccountQuery = this.userPlatformRepository.findOne({
+      where: { username: data.username, platform: { id: data.platformId } },
+      relations: ['user', 'platform'],
+    });
+
+    const platformQuery = this.platformRepository.findOne({
       where: { id: data.platformId },
     });
+
+    const statusQuery = this.statusRepository.findOne({
+      where: { id: data.statusId },
+    });
+
+    const [existingAccount, platform, status] = await Promise.all([
+      existingAccountQuery,
+      platformQuery,
+      statusQuery,
+    ]);
+
     if (!platform) {
       throw new HttpException('Platform not found', HttpStatus.NOT_FOUND);
     }
 
-    // Kiểm tra xem trạng thái có tồn tại không
-    const status = await this.statusRepository.findOne({
-      where: { id: data.statusId },
-    });
     if (!status) {
       throw new HttpException('Status not found', HttpStatus.NOT_FOUND);
     }
-
-    // Kiểm tra xem username có tồn tại trên nền tảng đó chưa
-    const existingAccount = await this.userPlatformRepository.findOne({
-      where: {
-        username: data.username,
-        platform: platform,
-      },
-    });
 
     if (existingAccount) {
       throw new HttpException(
@@ -57,26 +59,42 @@ export class AccountService {
       );
     }
 
-    // Kiểm tra xem user có tồn tại hay không
-    let user = await this.userRepository.findOne({
-      where: { id: data.userId },
-    });
-    if (!user) {
-      // Nếu user không tồn tại, tạo mới user
-      user = this.userRepository.create({ name: data.name });
-      user = await this.userRepository.save(user);
+    let userId: number;
+
+    // Kiểm tra và xử lý theo loại nền tảng
+    if (platform.name === 'Facebook' && data.email) {
+      const emailAccount = await this.userPlatformRepository.findOne({
+        where: { username: data.email, platform: { name: 'Gmail' } },
+        relations: ['user', 'platform'],
+      });
+
+      if (emailAccount) {
+        userId = emailAccount.user.id;
+      } else {
+        const newUser = new AccountUser();
+        const savedUser = await this.userRepository.save(newUser);
+        userId = savedUser.id;
+      }
+    } else if (platform.name === 'Gmail') {
+      const newUser = new AccountUser();
+      const savedUser = await this.userRepository.save(newUser);
+      userId = savedUser.id;
+    } else {
+      throw new HttpException(
+        'Email is required for Facebook accounts',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    // Tạo mới tài khoản nền tảng cho user
+    // Tạo bản ghi mới trong `AccountUserPlatform`
     const userPlatform = this.userPlatformRepository.create({
-      user: user,
+      user: { id: userId },
       platform: platform,
       username: data.username,
-      password: data.password, // Hash password nếu cần
+      password: data.password,
       status: status,
     });
 
-    // Lưu vào cơ sở dữ liệu
     return this.userPlatformRepository.save(userPlatform);
   }
 }
