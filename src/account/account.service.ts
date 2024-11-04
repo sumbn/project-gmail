@@ -7,7 +7,7 @@ import {
   AccountUser,
   AccountUserPlatform,
 } from './entities';
-import { RegisterAccountDto } from './dto';
+import { FilterAccountDto, PaginatedResult, RegisterAccountDto } from './dto';
 
 @Injectable()
 export class AccountService {
@@ -96,6 +96,48 @@ export class AccountService {
     });
 
     return this.userPlatformRepository.save(userPlatform);
+  }
+
+  async paginationAndFilter(
+    query: FilterAccountDto,
+    // token?: string,
+  ): Promise<PaginatedResult<any>> {
+    const itemsPerPage = Number(query.items_per_page) || 50;
+    const page = Number(query.page) || 1;
+    const skip = (page - 1) * itemsPerPage;
+
+    const keyword = query.search ? query.search.trim() : '';
+
+    const queryBuilder =
+      this.userPlatformRepository.createQueryBuilder('account');
+
+    if (keyword) {
+      queryBuilder.where(
+        'account.name LIKE :keyword OR account.email LIKE :keyword',
+        {
+          keyword: `%${keyword}%`,
+        },
+      );
+    }
+
+    const [res, total] = await queryBuilder
+      .orderBy('account.createdAt', 'ASC')
+      .take(itemsPerPage)
+      .skip(skip)
+      .getManyAndCount();
+
+    const lastPage = Math.ceil(total / itemsPerPage);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const prevPage = page - 1 < 1 ? null : page - 1;
+
+    return {
+      data: res,
+      total,
+      currentPage: page,
+      nextPage,
+      prevPage,
+      lastPage,
+    };
   }
 }
 

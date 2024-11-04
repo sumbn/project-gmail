@@ -1,7 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AccountService } from './account.service';
-import { RegisterAccountDto } from './dto';
+import { FilterAccountDto, RegisterAccountDto } from './dto';
 
 @ApiTags('Account')
 @Controller('account')
@@ -11,6 +11,11 @@ export class AccountController {
   @Post('register')
   register(@Body() body: RegisterAccountDto) {
     return this.service.createUserPlatformAccount(body);
+  }
+
+  @Get()
+  getMail(@Query() query: FilterAccountDto) {
+    return this.service.paginationAndFilter(query);
   }
 
   // @Post('register')
@@ -26,11 +31,5 @@ export class AccountController {
   // @Patch('check-account/:id')
   // updateLiveGmail(@Param('id') id: string) {
   //   return this.service.updateLive(Number(id));
-  // }
-
-  // @Get()
-  // getMail(@Query() query: FilterAccountDto) {
-  //   // return this.service.findAll(query);
-  //   return this.service.paginationAndFilter(query);
   // }
 }
