@@ -15,7 +15,4 @@ export class AccountPlatform {
 
   @OneToMany(() => AccountStatus, (status) => status.platform)
   statuses: AccountStatus[];
-
-  @Column({ nullable: true })
-  lockedAt?: Date;
 }

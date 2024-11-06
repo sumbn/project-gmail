@@ -105,8 +105,8 @@ export class AccountService {
     const itemsPerPage = Number(query.items_per_page) || 50;
     const page = Number(query.page) || 1;
     const skip = (page - 1) * itemsPerPage;
-
-    const keyword = query.search ? query.search.trim() : '';
+    const keyword = query.search ? query.search.trim() : null;
+    const platformId = query.platformId;
 
     const queryBuilder =
       this.userPlatformRepository.createQueryBuilder('account');
@@ -118,6 +118,13 @@ export class AccountService {
           keyword: `%${keyword}%`,
         },
       );
+    }
+
+    if (platformId) {
+      queryBuilder.andWhere('account.platform.id = :platformId', {
+        platformId,
+      });
+      // queryBuilder.leftJoinAndSelect('account.platform', 'platform');
     }
 
     const [res, total] = await queryBuilder

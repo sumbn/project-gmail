@@ -37,4 +37,10 @@ export class AccountUserPlatform {
 
   @UpdateDateColumn({ nullable: true })
   updatedAt: Date;
+
+  @Column({ default: false })
+  isLocked: boolean;
+
+  @Column({ nullable: true })
+  lockedAt?: Date;
 }
