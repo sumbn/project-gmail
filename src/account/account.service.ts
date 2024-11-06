@@ -121,9 +121,13 @@ export class AccountService {
     }
 
     if (platformId) {
-      queryBuilder.andWhere('account.platform.id = :platformId', {
-        platformId,
-      });
+      if (keyword) {
+        queryBuilder.andWhere('account.platform.id = :platformId', {
+          platformId,
+        });
+      } else {
+        queryBuilder.where('account.platform.id = :platformId', { platformId });
+      }
       // queryBuilder.leftJoinAndSelect('account.platform', 'platform');
     }
 

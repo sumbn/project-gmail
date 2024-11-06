@@ -13,6 +13,7 @@ import { AccountUser } from './accountUser.entity';
 
 @Entity()
 @Index(['username', 'platform'], { unique: true })
+@Index(['platform'])
 export class AccountUserPlatform {
   @PrimaryGeneratedColumn()
   id: number;

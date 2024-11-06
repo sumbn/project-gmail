@@ -14,5 +14,5 @@ export class FilterAccountDto {
 
   @Transform(({ value }) => Number(value))
   @IsNumber({}, { message: 'platformId must be a number' })
-  platformId?: string;
+  platformId: string;
 }
