@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AccountService } from './account.service';
 import { FilterAccountDto, RegisterAccountDto } from './dto';
@@ -14,7 +21,7 @@ export class AccountController {
   }
 
   @Get()
-  getMail(@Query() query: FilterAccountDto) {
+  getMail(@Query(new ValidationPipe()) query: FilterAccountDto) {
     return this.service.paginationAndFilter(query);
   }
 
