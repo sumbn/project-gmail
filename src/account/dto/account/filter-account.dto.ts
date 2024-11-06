@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsDefined, IsNumber } from 'class-validator';
 
 export class FilterAccountDto {
   @ApiProperty({ required: false })
@@ -12,7 +12,8 @@ export class FilterAccountDto {
   @ApiProperty({ required: false })
   search?: string;
 
+  @IsDefined({ message: 'platformId is required' })
   @Transform(({ value }) => Number(value))
-  @IsNumber({}, { message: 'platformId must be a number' })
+  @IsNumber({ allowNaN: false }, { message: 'platformId must be a number' })
   platformId: string;
 }
