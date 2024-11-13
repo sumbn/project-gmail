@@ -7,7 +7,7 @@ export class AccountPlatform {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 30 })
   name: string;
 
   @OneToMany(() => AccountUserPlatform, (row) => row.platform)

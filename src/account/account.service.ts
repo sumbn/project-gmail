@@ -1,13 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { FilterAccountDto, PaginatedResult, RegisterAccountDto } from './dto';
 import {
   AccountPlatform,
   AccountStatus,
   AccountUser,
   AccountUserPlatform,
 } from './entities';
-import { FilterAccountDto, PaginatedResult, RegisterAccountDto } from './dto';
 
 @Injectable()
 export class AccountService {
@@ -94,6 +94,10 @@ export class AccountService {
       password: data.password,
       status: status,
     });
+
+    // return plainToInstance(dto, obj, {
+    //   excludeExtraneousValues: true
+    // })
 
     return this.userPlatformRepository.save(userPlatform);
   }
