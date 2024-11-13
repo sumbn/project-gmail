@@ -16,4 +16,10 @@ export class FilterAccountDto {
   @Transform(({ value }) => Number(value))
   @IsNumber({ allowNaN: false }, { message: 'platformId must be a number' })
   platformId: string;
+
+  /*
+  @Transform(({obj}) => obj.firstName + " " + obj.lastName)
+  @Expose()
+  fullName
+  */
 }

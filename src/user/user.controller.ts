@@ -18,7 +18,7 @@ export class UserController {
   constructor(private service: UserService) {}
 
   @Post('create')
-  register(@Body() body: RegisterUserDto): Promise<User> {
+  register(@Body() body: RegisterUserDto): Promise<RegisterUserDto> {
     return this.service.create(body);
   }
 
