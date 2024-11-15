@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { mapDtoToEntity } from '../../utils/mapDtoToEntity';
 import { plainEntityToDto } from '../../utils/plainEntityToDto';
@@ -22,9 +26,9 @@ export class GenericService<Entity extends MyBaseEntity> {
       return plainEntityToDto(savedEntity, dtoClass);
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
-        throw new Error('Email already exists');
+        throw new ConflictException('Email already exists');
       }
-      throw new Error(`Save failed: ${error.message}`);
+      throw new BadRequestException(`Save failed: ${error.message}`);
     }
   }
 

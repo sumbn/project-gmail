@@ -1,26 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RegisterUserDto } from './dto/registerUser.dto';
 import { UserService } from './user.service';
+import { BaseController } from '../common/base.controller';
+import { User } from './entities/user.entity';
+import { UserDto } from './dto/registerUser.dto';
 
 @ApiBearerAuth()
 @ApiTags('User')
 @Controller('user')
-export class UserController {
-  constructor(private service: UserService) {}
-
-  @Post('create')
-  register(@Body() body: RegisterUserDto): Promise<RegisterUserDto> {
-    return this.service.saveUser(body);
+export class UserController extends BaseController<User, UserDto> {
+  constructor(private readonly userService: UserService) {
+    super(userService.getuserService(), UserDto);
   }
-
-  // @Get('id')
-  // getUser(@Param('id') id: string) {
-  //   return this.service.findOne(id);
-  // }
-
-  // @Get()
-  // getUsers() {
-  //   return this.service.findAll();
-  // }
 }
