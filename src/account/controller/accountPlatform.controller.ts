@@ -1,14 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { AccountPlatformService } from '../service/accountPlatform.service';
-import { CreateAccountPlatformDto } from '../dto';
+import { Controller } from '@nestjs/common';
+import { BaseController } from '../../common/base.controller';
+import { AccountPlatformDto } from '../dto/platform/account-platform.dto';
 import { AccountPlatform } from '../entities';
+import { AccountPlatformService } from '../service/accountPlatform.service';
 
 @Controller('account-platform')
-export class AccountPlatformController {
-  constructor(private service: AccountPlatformService) {}
-
-  @Post()
-  insert(@Body() data: CreateAccountPlatformDto): Promise<AccountPlatform> {
-    return this.service.insertDb(data);
+export class AccountPlatformController extends BaseController<
+  AccountPlatform,
+  AccountPlatformDto
+> {
+  constructor(private readonly accountPlatformService: AccountPlatformService) {
+    super(accountPlatformService.getPlatformService(), AccountPlatformDto);
   }
 }

@@ -1,18 +1,14 @@
-import { Expose, plainToClass } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
-export abstract class BaseDto {
+export class BaseDto {
   @Expose()
-  id: string;
+  id?: string;
 
-  @Expose()
-  createdAt: string;
+  createdAt?: string;
 
-  @Expose()
-  updatedAt: string;
+  updatedAt?: string;
 
-  //const plain = plainToClass(Dto, class, {excludeExtraneousValues: true})
-
-  static plainToClass<T>(this: new (...args: any[]) => T, obj: T): T {
-    return plainToClass(this, obj, { excludeExtraneousValues: true });
-  }
+  // static toInstance<T>(this: new () => T, obj: Partial<T>): T {
+  //   return plainToInstance(this, obj, { excludeExtraneousValues: true });
+  // }
 }

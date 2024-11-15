@@ -1,11 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
+import { MyBaseEntity } from '../../common/mysql/base.entity';
 import { AccountPlatform } from './accountPlatform.entity';
 
 @Entity()
-export class AccountStatus {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class AccountStatus extends MyBaseEntity {
   @Column({ unique: true })
   name: string;
 

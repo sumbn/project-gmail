@@ -1,15 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { RegisterUserDto } from './dto/registerUser.dto';
-import { User } from './entities/user.entity';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RegisterUserDto } from './dto/registerUser.dto';
+import { UserService } from './user.service';
 
 @ApiBearerAuth()
 @ApiTags('User')
@@ -19,16 +11,16 @@ export class UserController {
 
   @Post('create')
   register(@Body() body: RegisterUserDto): Promise<RegisterUserDto> {
-    return this.service.create(body);
+    return this.service.saveUser(body);
   }
 
-  @Get('id')
-  getUser(@Param('id', ParseIntPipe) id: number) {
-    return this.service.findOne(id);
-  }
+  // @Get('id')
+  // getUser(@Param('id') id: string) {
+  //   return this.service.findOne(id);
+  // }
 
-  @Get()
-  getUsers() {
-    return this.service.findAll();
-  }
+  // @Get()
+  // getUsers() {
+  //   return this.service.findAll();
+  // }
 }

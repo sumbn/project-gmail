@@ -1,12 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { AccountUserPlatform } from './accountUserPlatform.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
+import { MyBaseEntity } from '../../common/mysql/base.entity';
 import { AccountStatus } from './accountStatus.entity';
+import { AccountUserPlatform } from './accountUserPlatform.entity';
 
 @Entity()
-export class AccountPlatform {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class AccountPlatform extends MyBaseEntity {
   @Column({ unique: true, length: 30 })
   name: string;
 

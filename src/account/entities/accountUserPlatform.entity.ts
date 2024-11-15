@@ -4,9 +4,9 @@ import {
   Entity,
   Index,
   ManyToOne,
-  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { MyBaseEntity } from '../../common/mysql/base.entity';
 import { AccountPlatform } from './accountPlatform.entity';
 import { AccountStatus } from './accountStatus.entity';
 import { AccountUser } from './accountUser.entity';
@@ -14,10 +14,7 @@ import { AccountUser } from './accountUser.entity';
 @Entity()
 @Index(['username', 'platform'], { unique: true })
 @Index(['platform'])
-export class AccountUserPlatform {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class AccountUserPlatform extends MyBaseEntity {
   @ManyToOne(() => AccountUser)
   user: AccountUser;
 

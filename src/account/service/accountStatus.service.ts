@@ -1,8 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { AccountPlatform, AccountStatus } from '../entities';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAccountStatusDto } from '../dto';
 import { Repository } from 'typeorm';
+import { AccountPlatform, AccountStatus } from '../entities';
+import { GenericService } from '../../common/mysql/base.service';
+import { CreateAccountStatusDto } from '../dto';
+import { AccountPlatformDto } from '../dto/platform/account-platform.dto';
 
 @Injectable()
 export class AccountStatusServices {
@@ -11,29 +13,45 @@ export class AccountStatusServices {
     private readonly repo: Repository<AccountStatus>,
     @InjectRepository(AccountPlatform)
     private readonly platformRepository: Repository<AccountPlatform>,
-  ) {}
+  ) {
+    this.statusService = new GenericService(repo, AccountStatus);
+    this.platformService = new GenericService(
+      platformRepository,
+      AccountPlatform,
+    );
+  }
 
-  async insertToDB(data: CreateAccountStatusDto): Promise<AccountStatus> {
-    let platform = null;
+  private readonly statusService: GenericService<AccountStatus>;
+  private readonly platformService: GenericService<AccountPlatform>;
 
-    if (data.platformId) {
-      platform = await this.platformRepository.findOne({
-        where: { id: data.platformId },
-      });
-      if (!platform) {
-        throw new HttpException(
-          { message: 'Platform not found' },
-          HttpStatus.NOT_FOUND,
+  async insertToDB(
+    data: Partial<CreateAccountStatusDto>,
+  ): Promise<CreateAccountStatusDto> {
+    try {
+      let platform: AccountPlatformDto | undefined;
+
+      if (data.platformId) {
+        platform = await this.platformService.findOne(
+          data.platformId,
+          AccountPlatformDto,
         );
+        if (!platform) {
+          throw new Error(`Platform with id ${data.platformId} not found`);
+        }
       }
+
+      const status = await this.statusService.save(
+        {
+          name: data.name,
+          description: data.description,
+          platformId: platform.id, // Truyền cả đối tượng platform vào
+        },
+        CreateAccountStatusDto,
+      );
+
+      return status;
+    } catch (error) {
+      throw new Error(`Failed to insert account status: ${error.message}`);
     }
-
-    const status = this.repo.create({
-      name: data.name,
-      description: data.description,
-      platform: platform,
-    });
-
-    return this.repo.save(status);
   }
 }

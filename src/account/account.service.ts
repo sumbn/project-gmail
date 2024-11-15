@@ -1,7 +1,6 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FilterAccountDto, PaginatedResult, RegisterAccountDto } from './dto';
 import {
   AccountPlatform,
   AccountStatus,
@@ -22,6 +21,7 @@ export class AccountService {
     private readonly statusRepository: Repository<AccountStatus>,
   ) {}
 
+  /*
   async createUserPlatformAccount(
     data: RegisterAccountDto,
   ): Promise<AccountUserPlatform> {
@@ -154,6 +154,7 @@ export class AccountService {
       lastPage,
     };
   }
+    */
 }
 
 // async register(registerDto: RegisterAccountDto): Promise<any> {

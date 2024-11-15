@@ -1,31 +1,25 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AccountPlatform } from '../entities';
 import { Repository } from 'typeorm';
-import { CreateAccountPlatformDto } from '../dto';
+import { GenericService } from '../../common/mysql/base.service';
+import { AccountPlatformDto } from '../dto/platform/account-platform.dto';
+import { AccountPlatform } from '../entities';
 
 @Injectable()
 export class AccountPlatformService {
+  private readonly platformService: GenericService<AccountPlatform>;
   constructor(
     @InjectRepository(AccountPlatform)
     private repo: Repository<AccountPlatform>,
-  ) {}
+  ) {
+    this.platformService = new GenericService(repo, AccountPlatform);
+  }
 
-  async insertDb(data: CreateAccountPlatformDto): Promise<AccountPlatform> {
-    try {
-      return await this.repo.save(data);
-    } catch (error) {
-      if (error.code === '23505') {
-        throw new HttpException(
-          { message: 'Platform already exists' },
-          HttpStatus.CONFLICT,
-        );
-      }
+  getPlatformService(): GenericService<AccountPlatform> {
+    return this.platformService;
+  }
 
-      throw new HttpException(
-        { message: 'An error occurred' },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async insertDb(data: AccountPlatformDto): Promise<AccountPlatformDto> {
+    return this.platformService.save(data, AccountPlatformDto);
   }
 }

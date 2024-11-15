@@ -74,6 +74,8 @@ import { UserModule } from './user/user.module';
           AccountUser,
           AccountUserPlatform,
         ],
+        // logger: 'advanced-console',
+        // logging: 'all',
         synchronize: false,
       }),
       inject: [ConfigService],

@@ -7,6 +7,6 @@ export class AccountUserController {
 
   @Post()
   async createUser() {
-    return this.service.insertUserToDB();
+    return this.service.saveAccountUser();
   }
 }
