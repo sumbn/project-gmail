@@ -4,10 +4,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { mapDtoToEntity } from '../../utils/mapDtoToEntity';
-import { plainEntityToDto } from '../../utils/plainEntityToDto';
+
 import { BaseDto } from '../base.dto';
 import { MyBaseEntity } from './base.entity';
+import { mapDtoToEntity } from '../utils/mapDtoToEntity';
+import { plainEntityToDto } from '../utils/plainEntityToDto';
 
 @Injectable()
 export class GenericService<Entity extends MyBaseEntity> {

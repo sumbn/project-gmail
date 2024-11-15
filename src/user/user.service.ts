@@ -20,22 +20,3 @@ export class UserService {
     return this.userService.save(dto, UserDto);
   }
 }
-
-// @Injectable()
-// export class UserService {
-//   private readonly userService: GenericService<User>;
-
-//   constructor(
-//     @InjectRepository(User) userRepo: Repository<User>,
-//   ) {
-//     this.userService = new GenericService<User>(userRepo);
-//   }
-
-//   async saveUser(dto: RegisterUserDto): Promise<User> {
-//     return this.userService.save(dto);
-//   }
-
-//   async getAllUsers(): Promise<User[]> {
-//     return this.userService.findAll();
-//   }
-// }

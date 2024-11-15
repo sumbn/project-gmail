@@ -1,7 +1,7 @@
 import { Expose } from 'class-transformer';
 import { BaseDto } from '../../../common/base.dto';
 
-export class CreateAccountStatusDto extends BaseDto {
+export class AccountStatusDto extends BaseDto {
   @Expose()
   name: string;
 

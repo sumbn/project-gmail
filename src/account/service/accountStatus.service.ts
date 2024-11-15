@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AccountPlatform, AccountStatus } from '../entities';
 import { GenericService } from '../../common/mysql/base.service';
-import { CreateAccountStatusDto } from '../dto';
+import { AccountStatusDto } from '../dto';
 import { AccountPlatformDto } from '../dto/platform/account-platform.dto';
 
 @Injectable()
 export class AccountStatusServices {
+  private readonly statusService: GenericService<AccountStatus>;
+  private readonly platformService: GenericService<AccountPlatform>;
   constructor(
     @InjectRepository(AccountStatus)
     private readonly repo: Repository<AccountStatus>,
@@ -21,12 +23,13 @@ export class AccountStatusServices {
     );
   }
 
-  private readonly statusService: GenericService<AccountStatus>;
-  private readonly platformService: GenericService<AccountPlatform>;
+  getStatusService(): GenericService<AccountStatus> {
+    return this.statusService;
+  }
 
-  async insertToDB(
-    data: Partial<CreateAccountStatusDto>,
-  ): Promise<CreateAccountStatusDto> {
+  async createNewStatus(
+    data: Partial<AccountStatusDto>,
+  ): Promise<AccountStatusDto> {
     try {
       let platform: AccountPlatformDto | undefined;
 
@@ -44,9 +47,9 @@ export class AccountStatusServices {
         {
           name: data.name,
           description: data.description,
-          platformId: platform.id, // Truyền cả đối tượng platform vào
+          platformId: platform.id,
         },
-        CreateAccountStatusDto,
+        AccountStatusDto,
       );
 
       return status;
