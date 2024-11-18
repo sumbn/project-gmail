@@ -17,6 +17,17 @@ export class GenericService<Entity extends MyBaseEntity> {
     private readonly entityClass: new () => Entity,
   ) {}
 
+  async findAll<Dto>(dtoClass: new () => Dto): Promise<Dto[]> {
+    try {
+      const result = await this.repo.find();
+      return result.map((entity) => plainEntityToDto(entity, dtoClass));
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to fetch records: ${error.message}`,
+      );
+    }
+  }
+
   async save<Dto extends BaseDto>(
     dto: Dto,
     dtoClass: new () => Dto,

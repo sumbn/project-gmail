@@ -1,15 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { GenericService } from '../common/mysql/base.service';
+import {
+  AccountPlatformDto,
+  AccountStatusDto,
+  RegisterAccountDto,
+} from './dto';
 import {
   AccountPlatform,
   AccountStatus,
   AccountUser,
   AccountUserPlatform,
 } from './entities';
+import { AccountUserService } from './service/accountUser.service';
 
 @Injectable()
 export class AccountService {
+  private readonly platformService: GenericService<AccountPlatform>;
+  private readonly statusService: GenericService<AccountStatus>;
+  private readonly userPlatformService: GenericService<AccountUserPlatform>;
   constructor(
     @InjectRepository(AccountUserPlatform)
     private readonly userPlatformRepository: Repository<AccountUserPlatform>,
@@ -19,29 +29,42 @@ export class AccountService {
     private readonly platformRepository: Repository<AccountPlatform>,
     @InjectRepository(AccountStatus)
     private readonly statusRepository: Repository<AccountStatus>,
-  ) {}
 
-  /*
+    private readonly accountUserService: AccountUserService,
+  ) {
+    this.userPlatformService = new GenericService(
+      userPlatformRepository,
+      AccountUserPlatform,
+    );
+    this.platformService = new GenericService(
+      platformRepository,
+      AccountPlatform,
+    );
+    this.statusService = new GenericService(statusRepository, AccountStatus);
+  }
+
   async createUserPlatformAccount(
-    data: RegisterAccountDto,
-  ): Promise<AccountUserPlatform> {
-    const existingAccountQuery = this.userPlatformRepository.findOne({
+    data: Partial<RegisterAccountDto>,
+  ): Promise<any> {
+    const checkPlatform = this.platformService.findOne(
+      data.platformId,
+      AccountPlatformDto,
+    );
+
+    const checkStatus = this.statusService.findOne(
+      data.statusId,
+      AccountStatusDto,
+    );
+
+    const checkExistAccount = this.userPlatformRepository.findOne({
       where: { username: data.username, platform: { id: data.platformId } },
-      relations: ['user', 'platform'],
+      relations: ['platform'],
     });
 
-    const platformQuery = this.platformRepository.findOne({
-      where: { id: data.platformId },
-    });
-
-    const statusQuery = this.statusRepository.findOne({
-      where: { id: data.statusId },
-    });
-
-    const [existingAccount, platform, status] = await Promise.all([
-      existingAccountQuery,
-      platformQuery,
-      statusQuery,
+    const [platform, status, existingAccount] = await Promise.all([
+      checkPlatform,
+      checkStatus,
+      checkExistAccount,
     ]);
 
     if (!platform) {
@@ -59,34 +82,38 @@ export class AccountService {
       );
     }
 
-    let userId: number;
+    let userId: string;
 
-    // Kiểm tra và xử lý theo loại nền tảng
-    if (platform.name === 'Facebook' && data.email) {
-      const emailAccount = await this.userPlatformRepository.findOne({
-        where: { username: data.email, platform: { name: 'Gmail' } },
+    if (platform.name === 'gmail') {
+      const newUser = await this.accountUserService.saveNewAccountUser();
+      userId = newUser.id;
+    } else {
+      if (!data.email) {
+        throw new HttpException('Email must not empty', HttpStatus.BAD_REQUEST);
+      }
+
+      const checkExistEmail = await this.userPlatformRepository.findOne({
+        where: { username: data.email, platform: { name: 'gmail' } },
         relations: ['user', 'platform'],
       });
 
-      if (emailAccount) {
-        userId = emailAccount.user.id;
+      if (checkExistEmail) {
+        userId = checkExistEmail.user.id;
       } else {
-        const newUser = new AccountUser();
-        const savedUser = await this.userRepository.save(newUser);
-        userId = savedUser.id;
+        const newUser = await this.accountUserService.saveNewAccountUser();
+        userId = newUser.id;
+        const savedGmail = await this.userPlatformRepository.create({
+          user: newUser,
+          platform: { name: 'gmail' },
+          username: data.email,
+          status: { name: 'active' },
+          isOwn: false,
+        });
+
+        await this.userPlatformRepository.save(savedGmail);
       }
-    } else if (platform.name === 'Gmail') {
-      const newUser = new AccountUser();
-      const savedUser = await this.userRepository.save(newUser);
-      userId = savedUser.id;
-    } else {
-      throw new HttpException(
-        'Email is required for Facebook accounts',
-        HttpStatus.BAD_REQUEST,
-      );
     }
 
-    // Tạo bản ghi mới trong `AccountUserPlatform`
     const userPlatform = this.userPlatformRepository.create({
       user: { id: userId },
       platform: platform,
@@ -95,13 +122,13 @@ export class AccountService {
       status: status,
     });
 
-    // return plainToInstance(dto, obj, {
-    //   excludeExtraneousValues: true
-    // })
+    const saveData = await this.userPlatformRepository.save(userPlatform);
 
-    return this.userPlatformRepository.save(userPlatform);
+    return saveData;
   }
+}
 
+/*
   async paginationAndFilter(
     query: FilterAccountDto,
     // token?: string,
@@ -154,8 +181,8 @@ export class AccountService {
       lastPage,
     };
   }
-    */
-}
+
+  */
 
 // async register(registerDto: RegisterAccountDto): Promise<any> {
 //   return this.repo.save(registerDto);

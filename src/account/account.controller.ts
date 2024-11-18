@@ -1,16 +1,17 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AccountService } from './account.service';
+import { AccountUserPlatformDto } from './dto';
 
 @ApiTags('Account')
 @Controller('account')
 export class AccountController {
   constructor(private service: AccountService) {}
 
-  // @Post('register')
-  // register(@Body() body: RegisterAccountDto) {
-  //   return this.service.createUserPlatformAccount(body);
-  // }
+  @Post('register')
+  register(@Body() body: AccountUserPlatformDto) {
+    return this.service.createUserPlatformAccount(body);
+  }
 
   // @Get()
   // getMail(@Query(new ValidationPipe()) query: FilterAccountDto) {

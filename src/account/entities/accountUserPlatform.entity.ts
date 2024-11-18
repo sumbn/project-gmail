@@ -24,7 +24,7 @@ export class AccountUserPlatform extends MyBaseEntity {
   @Column()
   username: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @ManyToOne(() => AccountStatus)
@@ -41,4 +41,7 @@ export class AccountUserPlatform extends MyBaseEntity {
 
   @Column({ nullable: true })
   lockedAt?: Date;
+
+  @Column({ default: true })
+  isOwn: boolean;
 }

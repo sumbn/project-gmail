@@ -31,4 +31,9 @@ export class BaseController<Entity extends MyBaseEntity, Dto extends BaseDto> {
   async delete(@Param('id') id: string): Promise<{ result: string }> {
     return this.service.deleteById(id);
   }
+
+  @Get()
+  async getAll() {
+    return await this.service.findAll(this.dtoClass);
+  }
 }

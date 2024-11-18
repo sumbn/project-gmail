@@ -19,7 +19,7 @@ export class AccountUserService {
     return this.accounUserService;
   }
 
-  async saveAccountUser(): Promise<any> {
+  async saveNewAccountUser(): Promise<AccountUser> {
     const user = new AccountUser();
     return this.repo.save(user);
   }

@@ -38,5 +38,6 @@ import { AccountUserService } from './service/accountUser.service';
     AccountPlatformService,
     AccountUserService,
   ],
+  exports: [AccountUserService],
 })
 export class AccountModule {}
