@@ -5,8 +5,10 @@ import { GenericService } from '../common/mysql/base.service';
 import {
   AccountPlatformDto,
   AccountStatusDto,
+  PaginationAccountDto,
   RegisterAccountDto,
 } from './dto';
+
 import {
   AccountPlatform,
   AccountStatus,
@@ -19,7 +21,6 @@ import { AccountUserService } from './service/accountUser.service';
 export class AccountService {
   private readonly platformService: GenericService<AccountPlatform>;
   private readonly statusService: GenericService<AccountStatus>;
-  private readonly userPlatformService: GenericService<AccountUserPlatform>;
   constructor(
     @InjectRepository(AccountUserPlatform)
     private readonly userPlatformRepository: Repository<AccountUserPlatform>,
@@ -32,10 +33,6 @@ export class AccountService {
 
     private readonly accountUserService: AccountUserService,
   ) {
-    this.userPlatformService = new GenericService(
-      userPlatformRepository,
-      AccountUserPlatform,
-    );
     this.platformService = new GenericService(
       platformRepository,
       AccountPlatform,
@@ -126,67 +123,83 @@ export class AccountService {
 
     return saveData;
   }
-}
 
-/*
-  async paginationAndFilter(
-    query: FilterAccountDto,
-    // token?: string,
-  ): Promise<PaginatedResult<any>> {
-    const itemsPerPage = Number(query.items_per_page) || 50;
-    const page = Number(query.page) || 1;
-    const skip = (page - 1) * itemsPerPage;
-    const keyword = query.search ? query.search.trim() : null;
-    const platformId = query.platformId;
+  async paginationAndFilter(params: PaginationAccountDto): Promise<any> {
+    const page = Number(params.page) || 1;
+    const itemsPerPage = Number(params.items_per_page) || 10;
+    const platformId = params.platformId;
 
-    const queryBuilder =
-      this.userPlatformRepository.createQueryBuilder('account');
-
-    if (keyword) {
-      queryBuilder.where(
-        'account.name LIKE :keyword OR account.email LIKE :keyword',
-        {
-          keyword: `%${keyword}%`,
-        },
-      );
-    }
-
+    const where: any = {};
     if (platformId) {
-      if (keyword) {
-        queryBuilder.andWhere('account.platform.id = :platformId', {
-          platformId,
-        });
-      } else {
-        queryBuilder.where('account.platform.id = :platformId', { platformId });
-      }
-      // queryBuilder.leftJoinAndSelect('account.platform', 'platform');
+      where.platform = { id: platformId };
     }
 
-    const [res, total] = await queryBuilder
-      .orderBy('account.createdAt', 'ASC')
-      .take(itemsPerPage)
-      .skip(skip)
-      .getManyAndCount();
+    // Tính tổng số bản ghi trước
+    const total = await this.userPlatformRepository.count({ where });
+    const totalPages = Math.ceil(total / itemsPerPage);
 
-    const lastPage = Math.ceil(total / itemsPerPage);
-    const nextPage = page + 1 > lastPage ? null : page + 1;
-    const prevPage = page - 1 < 1 ? null : page - 1;
+    // Nếu page vượt quá số trang thực tế, set page = totalPages
+    const adjustedPage = page > totalPages ? totalPages : page;
+
+    const skip = (adjustedPage - 1) * itemsPerPage;
+
+    const [data] = await this.userPlatformRepository.findAndCount({
+      where,
+      relations: ['platform', 'user', 'status'],
+      skip,
+      take: itemsPerPage,
+      order: { createdAt: 'DESC' },
+    });
 
     return {
-      data: res,
+      data,
       total,
-      currentPage: page,
-      nextPage,
-      prevPage,
-      lastPage,
+      currentPage: adjustedPage,
+      itemsPerPage,
+      totalPages,
     };
   }
 
-  */
+  // async paginationAndFilter(
+  //   query: Partial<FilterAccountDto>,
+  // ): Promise<PaginatedResult<any>> {
+  //   const itemsPerPage = Number(query.items_per_page) || 50;
+  //   const page = Number(query.page) || 1;
+  //   const skip = (page - 1) * itemsPerPage;
+  //   const keyword = query.search ? query.search.trim() : null;
+  //   const platformId = query.platformId;
 
-// async register(registerDto: RegisterAccountDto): Promise<any> {
-//   return this.repo.save(registerDto);
-// }
+  //   if (platformId) {
+  //     if (keyword) {
+  //       queryBuilder.andWhere('account.platform.id = :platformId', {
+  //         platformId,
+  //       });
+  //     } else {
+  //       queryBuilder.where('account.platform.id = :platformId', { platformId });
+  //     }
+  //     // queryBuilder.leftJoinAndSelect('account.platform', 'platform');
+  //   }
+
+  //   const [res, total] = await queryBuilder
+  //     .orderBy('account.createdAt', 'ASC')
+  //     .take(itemsPerPage)
+  //     .skip(skip)
+  //     .getManyAndCount();
+
+  //   const lastPage = Math.ceil(total / itemsPerPage);
+  //   const nextPage = page + 1 > lastPage ? null : page + 1;
+  //   const prevPage = page - 1 < 1 ? null : page - 1;
+
+  //   return {
+  //     data: res,
+  //     total,
+  //     currentPage: page,
+  //     nextPage,
+  //     prevPage,
+  //     lastPage,
+  //   };
+  // }
+}
 
 // async getMailToFeed() {
 //   const lockTimeout = new Date(Date.now() - 15 * 60 * 1000);

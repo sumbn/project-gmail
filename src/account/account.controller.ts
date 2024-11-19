@@ -1,7 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AccountService } from './account.service';
-import { AccountUserPlatformDto } from './dto';
+import { AccountUserPlatformDto, PaginationAccountDto } from './dto';
 
 @ApiTags('Account')
 @Controller('account')
@@ -13,15 +13,10 @@ export class AccountController {
     return this.service.createUserPlatformAccount(body);
   }
 
-  // @Get()
-  // getMail(@Query(new ValidationPipe()) query: FilterAccountDto) {
-  //   return this.service.paginationAndFilter(query);
-  // }
-
-  // @Post('register')
-  // register(@Body() body: RegisterAccountDto): Promise<GmailAccount> {
-  //   return this.service.register(body);
-  // }
+  @Get()
+  getMail(@Query() query: PaginationAccountDto) {
+    return this.service.paginationAndFilter(query);
+  }
 
   // @Get('gmail-feed')
   // gmailToFeed() {
