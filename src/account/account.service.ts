@@ -5,8 +5,8 @@ import { GenericService } from '../common/mysql/base.service';
 import {
   AccountPlatformDto,
   AccountStatusDto,
+  AccountUserPlatformDto,
   PaginationAccountDto,
-  RegisterAccountDto,
 } from './dto';
 
 import {
@@ -41,7 +41,7 @@ export class AccountService {
   }
 
   async createUserPlatformAccount(
-    data: Partial<RegisterAccountDto>,
+    data: Partial<AccountUserPlatformDto>,
   ): Promise<any> {
     const checkPlatform = this.platformService.findOne(
       data.platformId,
@@ -116,6 +116,9 @@ export class AccountService {
       platform: platform,
       username: data.username,
       password: data.password,
+      phoneModel: data.phoneModel,
+      phoneId: data.phoneId,
+      createdBy: data.createdBy,
       status: status,
     });
 

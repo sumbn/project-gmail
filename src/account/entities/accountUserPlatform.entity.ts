@@ -36,6 +36,15 @@ export class AccountUserPlatform extends MyBaseEntity {
   @UpdateDateColumn({ nullable: true })
   updatedAt: Date;
 
+  @Column({ name: 'phone_model', length: 20 })
+  phoneModel: string;
+
+  @Column({ name: 'phone_id', length: 20 })
+  phoneId: string;
+
+  @Column({ name: 'created_by', length: 30 })
+  createdBy: string;
+
   @Column({ default: false })
   isLocked: boolean;
 
