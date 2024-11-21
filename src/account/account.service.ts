@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GenericService } from '../common/mysql/base.service';
@@ -21,6 +26,7 @@ import { AccountUserService } from './service/accountUser.service';
 export class AccountService {
   private readonly platformService: GenericService<AccountPlatform>;
   private readonly statusService: GenericService<AccountStatus>;
+  repository: any;
   constructor(
     @InjectRepository(AccountUserPlatform)
     private readonly userPlatformRepository: Repository<AccountUserPlatform>,
@@ -163,6 +169,23 @@ export class AccountService {
       itemsPerPage,
       totalPages,
     };
+  }
+
+  async partialUpdate(
+    id: string,
+    updateDto: Partial<AccountUserPlatformDto>,
+  ): Promise<any> {
+    // Lấy dữ liệu hiện tại từ DB
+    const existingEntity = await this.repository.findOne({ where: { id } });
+    if (!existingEntity) {
+      throw new NotFoundException(`Entity with id ${id} not found`);
+    }
+
+    // Chỉ cập nhật các trường có trong payload
+    Object.assign(existingEntity, updateDto);
+
+    // Lưu thay đổi
+    return this.repository.save(existingEntity);
   }
 
   // async paginationAndFilter(

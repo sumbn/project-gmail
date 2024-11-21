@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AccountService } from './account.service';
 import { AccountUserPlatformDto, PaginationAccountDto } from './dto';
@@ -16,6 +24,14 @@ export class AccountController {
   @Get()
   getMail(@Query() query: PaginationAccountDto) {
     return this.service.paginationAndFilter(query);
+  }
+
+  @Patch(':id')
+  updateStatus(
+    @Param('id') id: string,
+    @Body() statusId: AccountUserPlatformDto,
+  ) {
+    return this.service.partialUpdate(id, statusId);
   }
 
   // @Get('gmail-feed')
