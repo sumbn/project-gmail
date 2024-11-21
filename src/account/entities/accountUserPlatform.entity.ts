@@ -21,6 +21,12 @@ export class AccountUserPlatform extends MyBaseEntity {
   @ManyToOne(() => AccountPlatform)
   platform: AccountPlatform;
 
+  @Column({ length: 20 })
+  firstName: string;
+
+  @Column({ length: 20 })
+  lastName: string;
+
   @Column()
   username: string;
 

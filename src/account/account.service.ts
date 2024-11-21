@@ -117,6 +117,8 @@ export class AccountService {
       username: data.username,
       password: data.password,
       phoneModel: data.phoneModel,
+      firstName: data.firstName,
+      lastName: data.lastName,
       phoneId: data.phoneId,
       createdBy: data.createdBy,
       status: status,

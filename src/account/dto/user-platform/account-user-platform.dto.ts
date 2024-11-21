@@ -13,6 +13,10 @@ export class AccountUserPlatformDto extends BaseDto {
   @IsNotEmpty({ message: 'password is not empty' })
   password: string;
 
+  firstName: string;
+
+  lastName: string;
+
   statusId: string;
 
   phoneModel: string;
